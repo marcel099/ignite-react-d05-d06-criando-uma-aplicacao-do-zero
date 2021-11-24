@@ -36,23 +36,34 @@ export default function Home({
 }: HomeProps) {
   return (
     <div className={commonStyles.pageContainer}>
-      <div className={commonStyles.contentContainer}>
-        <header>
+      <div className={`${commonStyles.contentContainer} ${styles.contentContainer}`}>
+        <header className={styles.logoContainer}>
           <img src="./logo.svg" alt="logo" />
         </header>
 
         <main className={styles.postList}>
           {results.map(result => (
             <a key={result.uid} className={styles.post}>
-              <strong>{result.data.title}</strong>
-              <p>{result.data.subtitle}</p>
-              <div className={styles.createdAt}>
-                <FiCalendar />
-                <time dateTime="">{result.first_publication_date}</time>
-              </div>
-              <div className={styles.author}>
-                <FiUser />
-                <span>{result.data.author}</span>
+              <strong className={styles.title}>
+                {result.data.title}
+              </strong>
+              <p className={styles.subtitle}>
+                {result.data.subtitle}
+              </p>
+              <div className={styles.info}>
+                <div className={styles.createdAt}>
+                  <FiCalendar />
+                  <time dateTime="">
+                    {result.first_publication_date}
+                  </time>
+                </div>
+                
+                <div className={styles.author}>
+                  <FiUser />
+                  <span>
+                    {result.data.author}
+                  </span>
+                </div>
               </div>
             </a>
           ))}
@@ -60,7 +71,7 @@ export default function Home({
 
         {
           next_page !== null ? (
-            <footer>
+            <footer className={styles.buttonContainer}>
               <button type="button">
                 Carregar mais posts
               </button>
@@ -76,7 +87,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
     Prismic.Predicates.at('document.type', 'posts'),
-    { pageSize: 4 }
+    { pageSize: 3 }
   );
 
   const posts: Post[] = postsResponse.results.map(result => ({
