@@ -55,59 +55,57 @@ export default function Post({ post }: PostProps) {
       <Head>
         <title>{post.data.title} | spacetraveling</title>
       </Head>
-      <div className={commonStyles.pageContainer}>
-        <div className={`${commonStyles.contentContainer} ${styles.contentContainer}`}>
-          <Header />
-          <article className={styles.post}>
-            <div className={styles.bannerContainer}>
-              <img src={post.data.banner.url} alt="Banner" />
-            </div>
-            <h1 className={styles.title}>
-              {post.data.title}
-            </h1>
-
-            <div className={styles.info}>
-              <div className={styles.createdAt}>
-                <FiCalendar />
-                <time dateTime="">
-                  {post.first_publication_date}
-                </time>
-              </div>
-              <div className={styles.author}>
-                <FiUser />
-                <span>
-                  {post.data.author}
-                </span>
-              </div>
-              <div className={styles.readingTime}>
-                <FiClock />
-                <span>
-                  {readingTime} min
-                </span>
-              </div>
-            </div>
-
-            <main className={styles.postContent}>
-              {post.data.content.map((section) => {
-                return (
-                  <>
-                    {section.heading && (
-                      <h2>
-                        {section.heading}
-                      </h2>
-                    )}
-                    {section.body.map(paragraph => (
-                      <p
-                        className={styles.postParagraph}
-                        dangerouslySetInnerHTML={{ __html: paragraph.text}}
-                      />
-                    ))}
-                  </>
-                )
-              })}
-            </main>
-          </article>
+      <div className={`${commonStyles.pageContainer} ${styles.pageContainer}`}>
+        <Header />
+        <div className={styles.bannerContainer}>
+          <img src={post.data.banner.url} alt="Banner" />
         </div>
+        <article className={styles.post}>
+          <h1 className={styles.title}>
+            {post.data.title}
+          </h1>
+
+          <div className={styles.info}>
+            <div className={styles.createdAt}>
+              <FiCalendar />
+              <time dateTime="">
+                {post.first_publication_date}
+              </time>
+            </div>
+            <div className={styles.author}>
+              <FiUser />
+              <span>
+                {post.data.author}
+              </span>
+            </div>
+            <div className={styles.readingTime}>
+              <FiClock />
+              <span>
+                {readingTime} min
+              </span>
+            </div>
+          </div>
+
+          <main className={styles.postContent}>
+            {post.data.content.map((section) => {
+              return (
+                <>
+                  {section.heading && (
+                    <h2>
+                      {section.heading}
+                    </h2>
+                  )}
+                  {section.body.map(paragraph => (
+                    <p
+                      className={styles.postParagraph}
+                      dangerouslySetInnerHTML={{ __html: paragraph.text}}
+                    />
+                  ))}
+                </>
+              )
+            })}
+          </main>
+        </article>
       </div>
     </>
   )

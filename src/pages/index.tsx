@@ -41,52 +41,50 @@ export default function Home({
       <Head>
         <title>Home | spacetraveling</title>
       </Head>
-      <div className={commonStyles.pageContainer}>
-        <div className={`${commonStyles.contentContainer} ${styles.contentContainer}`}>
-          <header className={styles.logoContainer}>
-            <img src="./logo.svg" alt="logo" />
-          </header>
+      <div className={`${commonStyles.pageContainer} ${styles.pageContainer}`}>
+        <header className={styles.logoContainer}>
+          <img src="./logo.svg" alt="logo" />
+        </header>
 
-          <main className={styles.postList}>
-            {results.map(result => (
-              <Link href={`post/${result.uid}`} key={result.uid}>
-                <a href="" className={styles.post}>
-                  <strong className={styles.title}>
-                    {result.data.title}
-                  </strong>
-                  <p className={styles.subtitle}>
-                    {result.data.subtitle}
-                  </p>
-                  <div className={styles.info}>
-                    <div className={styles.createdAt}>
-                      <FiCalendar />
-                      <time dateTime="">
-                        {result.first_publication_date}
-                      </time>
-                    </div>
-                    
-                    <div className={styles.author}>
-                      <FiUser />
-                      <span>
-                        {result.data.author}
-                      </span>
-                    </div>
+        <main className={styles.postList}>
+          {results.map(result => (
+            <Link href={`post/${result.uid}`} key={result.uid}>
+              <a href="" className={styles.post}>
+                <strong className={styles.title}>
+                  {result.data.title}
+                </strong>
+                <p className={styles.subtitle}>
+                  {result.data.subtitle}
+                </p>
+                <div className={styles.info}>
+                  <div className={styles.createdAt}>
+                    <FiCalendar />
+                    <time dateTime="">
+                      {result.first_publication_date}
+                    </time>
                   </div>
-                </a>
-              </Link>
-            ))}
-          </main>
+                  
+                  <div className={styles.author}>
+                    <FiUser />
+                    <span>
+                      {result.data.author}
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </Link>
+          ))}
+        </main>
 
-          {
-            next_page !== null ? (
-              <footer className={styles.buttonContainer}>
-                <button type="button">
-                  Carregar mais posts
-                </button>
-              </footer>
-            ) : ''
-          }
-        </div>
+        {
+          next_page !== null ? (
+            <footer className={styles.buttonContainer}>
+              <button type="button">
+                Carregar mais posts
+              </button>
+            </footer>
+          ) : ''
+        }
       </div>
     </>
   )
