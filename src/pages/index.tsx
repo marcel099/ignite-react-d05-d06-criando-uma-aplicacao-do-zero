@@ -34,36 +34,40 @@ export default function Home({
     results,
   },
 }: HomeProps) {
-  // console.log(postsPagination)
-
   return (
-    <div className={styles.container}>
-      <img src="./logo.svg" alt="logo" />
+    <div className={commonStyles.pageContainer}>
+      <div className={commonStyles.contentContainer}>
+        <header>
+          <img src="./logo.svg" alt="logo" />
+        </header>
 
-      <ul className={styles.postList}>
-        {results.map(result => (
-          <li key={result.uid} className={styles.post}>
-            <strong>{result.data.title}</strong>
-            <p>{result.data.subtitle}</p>
-            <div className={styles.createdAt}>
-              <FiCalendar />
-              <time dateTime="">{result.first_publication_date}</time>
-            </div>
-            <div className={styles.author}>
-              <FiUser />
-              <span>{result.data.author}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
-      
-      {
-        next_page !== null ? (
-          <button type="button">
-            Carregar mais posts
-          </button>
-        ) : ''
-      }
+        <main className={styles.postList}>
+          {results.map(result => (
+            <a key={result.uid} className={styles.post}>
+              <strong>{result.data.title}</strong>
+              <p>{result.data.subtitle}</p>
+              <div className={styles.createdAt}>
+                <FiCalendar />
+                <time dateTime="">{result.first_publication_date}</time>
+              </div>
+              <div className={styles.author}>
+                <FiUser />
+                <span>{result.data.author}</span>
+              </div>
+            </a>
+          ))}
+        </main>
+
+        {
+          next_page !== null ? (
+            <footer>
+              <button type="button">
+                Carregar mais posts
+              </button>
+            </footer>
+          ) : ''
+        }
+      </div>
     </div>
   )
 }
@@ -71,10 +75,9 @@ export default function Home({
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
-    Prismic.Predicates.at('document.type', 'posts')
+    Prismic.Predicates.at('document.type', 'posts'),
+    { pageSize: 4 }
   );
-
-  console.log(postsResponse)
 
   const posts: Post[] = postsResponse.results.map(result => ({
     uid: result.uid,
