@@ -1,6 +1,7 @@
 import { GetStaticProps } from 'next';
-import Prismic from '@prismicio/client'
+import Link from 'next/link'
 import { FiCalendar, FiUser } from 'react-icons/fi'
+import Prismic from '@prismicio/client'
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
@@ -43,29 +44,31 @@ export default function Home({
 
         <main className={styles.postList}>
           {results.map(result => (
-            <a key={result.uid} className={styles.post}>
-              <strong className={styles.title}>
-                {result.data.title}
-              </strong>
-              <p className={styles.subtitle}>
-                {result.data.subtitle}
-              </p>
-              <div className={styles.info}>
-                <div className={styles.createdAt}>
-                  <FiCalendar />
-                  <time dateTime="">
-                    {result.first_publication_date}
-                  </time>
+            <Link href={`post/${result.uid}`} key={result.uid}>
+              <a href="" className={styles.post}>
+                <strong className={styles.title}>
+                  {result.data.title}
+                </strong>
+                <p className={styles.subtitle}>
+                  {result.data.subtitle}
+                </p>
+                <div className={styles.info}>
+                  <div className={styles.createdAt}>
+                    <FiCalendar />
+                    <time dateTime="">
+                      {result.first_publication_date}
+                    </time>
+                  </div>
+                  
+                  <div className={styles.author}>
+                    <FiUser />
+                    <span>
+                      {result.data.author}
+                    </span>
+                  </div>
                 </div>
-                
-                <div className={styles.author}>
-                  <FiUser />
-                  <span>
-                    {result.data.author}
-                  </span>
-                </div>
-              </div>
-            </a>
+              </a>
+            </Link>
           ))}
         </main>
 
@@ -113,6 +116,6 @@ export const getStaticProps: GetStaticProps = async () => {
 
   return {
     props,
-    revalidate: 60 * 30 // 30 minutos
+    revalidate: 60 * 30 // 30 minutes
   }
 };

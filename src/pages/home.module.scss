@@ -9,8 +9,6 @@
 
 .postList {
   .post {
-    cursor: pointer;
-
     & + .post {
       display: inline-block;
       margin-top: 3rem;
