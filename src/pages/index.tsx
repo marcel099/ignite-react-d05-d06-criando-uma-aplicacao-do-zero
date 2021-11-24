@@ -1,7 +1,8 @@
 import { GetStaticProps } from 'next';
-import Link from 'next/link'
-import { FiCalendar, FiUser } from 'react-icons/fi'
-import Prismic from '@prismicio/client'
+import Head from 'next/head';
+import Link from 'next/link';
+import { FiCalendar, FiUser } from 'react-icons/fi';
+import Prismic from '@prismicio/client';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
@@ -36,53 +37,58 @@ export default function Home({
   },
 }: HomeProps) {
   return (
-    <div className={commonStyles.pageContainer}>
-      <div className={`${commonStyles.contentContainer} ${styles.contentContainer}`}>
-        <header className={styles.logoContainer}>
-          <img src="./logo.svg" alt="logo" />
-        </header>
+    <>
+      <Head>
+        <title>Home | spacetraveling</title>
+      </Head>
+      <div className={commonStyles.pageContainer}>
+        <div className={`${commonStyles.contentContainer} ${styles.contentContainer}`}>
+          <header className={styles.logoContainer}>
+            <img src="./logo.svg" alt="logo" />
+          </header>
 
-        <main className={styles.postList}>
-          {results.map(result => (
-            <Link href={`post/${result.uid}`} key={result.uid}>
-              <a href="" className={styles.post}>
-                <strong className={styles.title}>
-                  {result.data.title}
-                </strong>
-                <p className={styles.subtitle}>
-                  {result.data.subtitle}
-                </p>
-                <div className={styles.info}>
-                  <div className={styles.createdAt}>
-                    <FiCalendar />
-                    <time dateTime="">
-                      {result.first_publication_date}
-                    </time>
+          <main className={styles.postList}>
+            {results.map(result => (
+              <Link href={`post/${result.uid}`} key={result.uid}>
+                <a href="" className={styles.post}>
+                  <strong className={styles.title}>
+                    {result.data.title}
+                  </strong>
+                  <p className={styles.subtitle}>
+                    {result.data.subtitle}
+                  </p>
+                  <div className={styles.info}>
+                    <div className={styles.createdAt}>
+                      <FiCalendar />
+                      <time dateTime="">
+                        {result.first_publication_date}
+                      </time>
+                    </div>
+                    
+                    <div className={styles.author}>
+                      <FiUser />
+                      <span>
+                        {result.data.author}
+                      </span>
+                    </div>
                   </div>
-                  
-                  <div className={styles.author}>
-                    <FiUser />
-                    <span>
-                      {result.data.author}
-                    </span>
-                  </div>
-                </div>
-              </a>
-            </Link>
-          ))}
-        </main>
+                </a>
+              </Link>
+            ))}
+          </main>
 
-        {
-          next_page !== null ? (
-            <footer className={styles.buttonContainer}>
-              <button type="button">
-                Carregar mais posts
-              </button>
-            </footer>
-          ) : ''
-        }
+          {
+            next_page !== null ? (
+              <footer className={styles.buttonContainer}>
+                <button type="button">
+                  Carregar mais posts
+                </button>
+              </footer>
+            ) : ''
+          }
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

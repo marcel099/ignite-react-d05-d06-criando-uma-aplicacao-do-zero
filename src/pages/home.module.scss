@@ -40,14 +40,12 @@
       > .author, > .createdAt {
         display: flex;
         align-items: center;
+        
+        margin-right: 2rem;
 
         > :last-child {
           margin-left: 0.5rem;
         }
-      }
-
-      .createdAt {
-        width: 9.625rem;
       }
     }
   }

@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { FiCalendar, FiUser, FiWatch } from 'react-icons/fi'
-import Prismic from '@prismicio/client'
+import Head from 'next/head';
+import { FiCalendar, FiUser, FiWatch } from 'react-icons/fi';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
@@ -34,13 +34,69 @@ interface PostProps {
   post: Post;
 }
 
-export default function Post() {
+export default function Post({ post }: PostProps) {
+  const readingTime = 2;
+
   return (
-    <div className={commonStyles.pageContainer}>
-      <div className={`${commonStyles.contentContainer} ${styles.contentContainer}`}>
-        <Header />
+    <>
+      <Head>
+        <title>{post.data.title} | spacetraveling</title>
+      </Head>
+      <div className={commonStyles.pageContainer}>
+        <div className={`${commonStyles.contentContainer} ${styles.contentContainer}`}>
+          <Header />
+          <article className={styles.post}>
+            <div className={styles.bannerContainer}>
+              <img src={post.data.banner.url} alt="Banner" />
+            </div>
+            <h1 className={styles.title}>
+              {post.data.title}
+            </h1>
+
+            <div className={styles.info}>
+              <div className={styles.createdAt}>
+                <FiCalendar />
+                <time dateTime="">
+                  {post.first_publication_date}
+                </time>
+              </div>
+              <div className={styles.author}>
+                <FiUser />
+                <span>
+                  {post.data.author}
+                </span>
+              </div>
+              <div className={styles.readingTime}>
+                <FiWatch />
+                <span>
+                  {readingTime} min
+                </span>
+              </div>
+            </div>
+
+            <main className={styles.postContent}>
+              {post.data.content.map((section) => {
+                return (
+                  <>
+                    {section.heading && (
+                      <h2>
+                        {section.heading}
+                      </h2>
+                    )}
+                    {section.body.map(paragraph => (
+                      <p
+                        className={styles.postParagraph}
+                        dangerouslySetInnerHTML={{ __html: paragraph.text}}
+                      />
+                    ))}
+                  </>
+                )
+              })}
+            </main>
+          </article>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -86,7 +142,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         },
         content: response.data.content.map(section => ({
           heading: section.heading,
-          body: RichText.asHtml(section.body)
+          body: section.body.map(({text}) => ({text}))
         })),
       }
     }
