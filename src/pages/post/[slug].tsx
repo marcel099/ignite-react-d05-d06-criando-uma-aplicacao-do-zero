@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
-import { FiCalendar, FiUser, FiWatch } from 'react-icons/fi';
+import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
@@ -35,7 +35,20 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
-  const readingTime = 2;
+
+  const numberOfWords = post.data.content.reduce((numberOfWords, section) => {
+    const numberOfWordsInHeading = section.heading?.split(' ')?.length ?? 0;
+
+    const numberOfWordsInBody = section.body.reduce((
+      numberOfWordsInBody, paragraph
+    ) => {
+      return numberOfWordsInBody + paragraph.text.split(' ').length
+    }, 0)
+
+    return numberOfWords + numberOfWordsInHeading + numberOfWordsInBody;
+  }, 0)
+
+  const readingTime = Math.ceil(numberOfWords / 200);
 
   return (
     <>
@@ -67,7 +80,7 @@ export default function Post({ post }: PostProps) {
                 </span>
               </div>
               <div className={styles.readingTime}>
-                <FiWatch />
+                <FiClock />
                 <span>
                   {readingTime} min
                 </span>
