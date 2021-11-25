@@ -87,21 +87,22 @@ export default function Post({ post }: PostProps) {
           </div>
 
           <main className={styles.postContent}>
-            {post.data.content.map((section) => {
+            {post.data.content.map((section, idx) => {
               return (
-                <>
+                <div key={idx}>
                   {section.heading && (
                     <h2>
                       {section.heading}
                     </h2>
                   )}
-                  {section.body.map(paragraph => (
+                  {section.body.map((paragraph, idx) => (
                     <p
+                      key={idx}
                       className={styles.postParagraph}
                       dangerouslySetInnerHTML={{ __html: paragraph.text}}
                     />
                   ))}
-                </>
+                </div>
               )
             })}
           </main>
@@ -136,7 +137,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = await prismic.getByUID('posts', String(slug), {
+    fetch: [ 'banner', 'title', 'author', 'content' ]
+  });
 
   const props: PostProps = {
     post: {

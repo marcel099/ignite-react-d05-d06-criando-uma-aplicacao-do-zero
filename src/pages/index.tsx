@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -36,6 +37,33 @@ export default function Home({
     results,
   },
 }: HomeProps) {
+  const [posts, setPosts] = useState(results)
+  const [nextPageUrl, setNextPageUrl] = useState(next_page)
+  console.log({ next_page })
+
+  function handleLoadMorePosts() {
+    fetch(nextPageUrl)
+      .then(response => response.json())
+      .then(data => {
+        const newPosts: Post[] = data.results.map(result => ({
+          uid: result.uid,
+          first_publication_date: format(
+            new Date(result.first_publication_date),
+            "dd MMM YYY",
+            { locale: ptBR }
+          ),
+          data: {
+            title: result.data.title,
+            subtitle: result.data.subtitle,
+            author: result.data.author,
+          }
+        }))
+
+        setPosts([...posts, ...newPosts])
+        setNextPageUrl(data.next_page)
+      })
+  }
+
   return (
     <>
       <Head>
@@ -47,27 +75,27 @@ export default function Home({
         </header>
 
         <main className={styles.postList}>
-          {results.map(result => (
-            <Link href={`post/${result.uid}`} key={result.uid}>
+          {posts.map(post => (
+            <Link href={`post/${post.uid}`} key={post.uid}>
               <a href="" className={styles.post}>
                 <strong className={styles.title}>
-                  {result.data.title}
+                  {post.data.title}
                 </strong>
                 <p className={styles.subtitle}>
-                  {result.data.subtitle}
+                  {post.data.subtitle}
                 </p>
                 <div className={styles.info}>
                   <div className={styles.createdAt}>
                     <FiCalendar />
                     <time dateTime="">
-                      {result.first_publication_date}
+                      {post.first_publication_date}
                     </time>
                   </div>
                   
                   <div className={styles.author}>
                     <FiUser />
                     <span>
-                      {result.data.author}
+                      {post.data.author}
                     </span>
                   </div>
                 </div>
@@ -77,9 +105,9 @@ export default function Home({
         </main>
 
         {
-          next_page !== null ? (
+          nextPageUrl !== null ? (
             <footer className={styles.buttonContainer}>
-              <button type="button">
+              <button type="button" onClick={() => handleLoadMorePosts()}>
                 Carregar mais posts
               </button>
             </footer>
@@ -94,7 +122,11 @@ export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
     Prismic.Predicates.at('document.type', 'posts'),
-    { pageSize: 3 }
+    {
+      orderings : '[document.first_publication_date desc]',
+      fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
+      pageSize: 3,
+    }
   );
 
   const posts: Post[] = postsResponse.results.map(result => ({
