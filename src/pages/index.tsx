@@ -47,11 +47,7 @@ export default function Home({
       .then(data => {
         const newPosts: Post[] = data.results.map(result => ({
           uid: result.uid,
-          first_publication_date: format(
-            new Date(result.first_publication_date),
-            "dd MMM YYY",
-            { locale: ptBR }
-          ),
+          first_publication_date: result.first_publication_date,
           data: {
             title: result.data.title,
             subtitle: result.data.subtitle,
@@ -60,6 +56,7 @@ export default function Home({
         }))
 
         setPosts([...posts, ...newPosts])
+        console.log({newNextPage: data.next_page})
         setNextPageUrl(data.next_page)
       })
   }
@@ -88,7 +85,13 @@ export default function Home({
                   <div className={styles.createdAt}>
                     <FiCalendar />
                     <time dateTime="">
-                      {post.first_publication_date}
+                      {
+                        format(
+                          new Date( post.first_publication_date ),
+                          'dd MMM YYY',
+                          { locale: ptBR }
+                        )
+                      }
                     </time>
                   </div>
                   
@@ -131,11 +134,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const posts: Post[] = postsResponse.results.map(result => ({
     uid: result.uid,
-    first_publication_date: format(
-      new Date(result.first_publication_date),
-      "dd MMM YYY",
-      { locale: ptBR }
-    ),
+    first_publication_date: result.first_publication_date,
     data: {
       title: result.data.title,
       subtitle: result.data.subtitle,
