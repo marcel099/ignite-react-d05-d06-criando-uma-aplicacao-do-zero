@@ -39,7 +39,6 @@ export default function Home({
 }: HomeProps) {
   const [posts, setPosts] = useState(results)
   const [nextPageUrl, setNextPageUrl] = useState(next_page)
-  console.log({ next_page })
 
   function handleLoadMorePosts() {
     fetch(nextPageUrl)
@@ -56,7 +55,6 @@ export default function Home({
         }))
 
         setPosts([...posts, ...newPosts])
-        console.log({newNextPage: data.next_page})
         setNextPageUrl(data.next_page)
       })
   }
