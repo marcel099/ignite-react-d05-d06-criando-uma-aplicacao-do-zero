@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -99,6 +100,16 @@ export default function Post({ post }: PostProps) {
             </div>
           </div>
 
+          <em className={styles.lastEditionDate}>
+            {
+              format(
+                new Date(post.last_publication_date),
+                "'* editado em 'dd MMM YYY', às 'HH:mm",
+                { locale: ptBR }
+              )
+            }
+          </em>
+
           <main className={styles.postContent}>
             {post.data.content.map((section, idx) => {
               return (
@@ -162,6 +173,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
+
+  console.log({response})
 
   const props: PostProps = {
     post: response,
