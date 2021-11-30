@@ -8,7 +8,8 @@ import ptBR from 'date-fns/locale/pt-BR';
 
 import { getPrismicClient } from '../../services/prismic';
 
-import Header from '../../components/Header';
+import { PostHeader } from '../../components/PostHeader';
+import { FooterPostNavigation } from '../../components/FooterPostNavigation';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
@@ -64,73 +65,82 @@ export default function Post({ post }: PostProps) {
         <title>{post.data.title} | spacetraveling</title>
       </Head>
       <div className={`${commonStyles.pageContainer} ${styles.pageContainer}`}>
-        <Header />
-        <div className={styles.bannerContainer}>
-          <img src={post.data.banner.url} alt="Banner" />
-        </div>
-        <article className={styles.post}>
-          <h1 className={styles.title}>
-            {post.data.title}
-          </h1>
-
-          <div className={styles.info}>
-            <div className={styles.createdAt}>
-              <FiCalendar />
-              <time dateTime="">
-                {
-                  format(
-                    new Date( post.first_publication_date ),
-                    'dd MMM YYY',
-                    { locale: ptBR }
-                  )
-                }
-              </time>
-            </div>
-            <div className={styles.author}>
-              <FiUser />
-              <span>
-                {post.data.author}
-              </span>
-            </div>
-            <div className={styles.readingTime}>
-              <FiClock />
-              <span>
-                {readingTime} min
-              </span>
-            </div>
+        <PostHeader />
+        <main>
+          <div className={styles.bannerContainer}>
+            <img src={post.data.banner.url} alt="Banner" />
           </div>
+          <article className={styles.post}>
+            <h1 className={styles.title}>
+              {post.data.title}
+            </h1>
 
-          <em className={styles.lastEditionDate}>
-            {
-              format(
-                new Date(post.last_publication_date),
-                "'* editado em 'dd MMM YYY', às 'HH:mm",
-                { locale: ptBR }
-              )
-            }
-          </em>
+            <div className={styles.info}>
+              <div className={styles.createdAt}>
+                <FiCalendar />
+                <time dateTime="">
+                  {
+                    format(
+                      new Date( post.first_publication_date ),
+                      'dd MMM YYY',
+                      { locale: ptBR }
+                    )
+                  }
+                </time>
+              </div>
+              <div className={styles.author}>
+                <FiUser />
+                <span>
+                  {post.data.author}
+                </span>
+              </div>
+              <div className={styles.readingTime}>
+                <FiClock />
+                <span>
+                  {readingTime} min
+                </span>
+              </div>
+            </div>
 
-          <main className={styles.postContent}>
-            {post.data.content.map((section, idx) => {
-              return (
-                <div key={idx}>
-                  {section.heading && (
-                    <h2>
-                      {section.heading}
-                    </h2>
-                  )}
-                  {section.body.map((paragraph, idx) => (
-                    <p
-                      key={idx}
-                      className={styles.postParagraph}
-                      dangerouslySetInnerHTML={{ __html: paragraph.text}}
-                    />
-                  ))}
-                </div>
-              )
-            })}
-          </main>
-        </article>
+            <em className={styles.lastEditionDate}>
+              {
+                format(
+                  new Date(post.last_publication_date),
+                  "'* editado em 'dd MMM YYY', às 'HH:mm",
+                  { locale: ptBR }
+                )
+              }
+            </em>
+
+            <main className={styles.postContent}>
+              {post.data.content.map((section, idx) => {
+                return (
+                  <div key={idx}>
+                    {section.heading && (
+                      <h2>
+                        {section.heading}
+                      </h2>
+                    )}
+                    {section.body.map((paragraph, idx) => (
+                      <p
+                        key={idx}
+                        className={styles.postParagraph}
+                        dangerouslySetInnerHTML={{ __html: paragraph.text}}
+                      />
+                    ))}
+                  </div>
+                )
+              })}
+            </main>
+          </article>
+        </main>
+
+        <footer>
+          <FooterPostNavigation />
+          <article className={styles.commentsArea}>
+
+          </article>
+        </footer>
       </div>
     </>
   )

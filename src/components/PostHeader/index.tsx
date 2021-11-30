@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import styles from './header.module.scss';
+import styles from './styles.module.scss';
 
-export default function Header() {
+export function PostHeader() {
   return (
     // <header className={styles.container}>
     <div className={styles.logoContainer}>

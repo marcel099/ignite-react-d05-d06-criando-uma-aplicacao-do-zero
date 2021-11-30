@@ -1,0 +1,34 @@
+.divider {
+  height: 1px;
+  width: 100%;
+
+  margin-top: 3.75rem;
+
+  background-color: var(--gray-200);
+  filter: opacity(0.5);
+}
+
+.postsNavigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-top: 3rem;
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: var(--gray-100);
+  }
+
+  a {
+    font-weight: 600;
+    color: var(--pink-500);
+
+    transition: 0.2s filter;
+
+    &:hover {
+      filter: brightness(0.9);
+    }
+  }
+}
