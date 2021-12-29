@@ -1,5 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import Prismic from '@prismicio/client';
 import { format } from 'date-fns';
@@ -10,11 +11,10 @@ import { getPrismicClient } from '../../services/prismic';
 
 import { PostHeader } from '../../components/PostHeader';
 import { FooterPostNavigation } from '../../components/FooterPostNavigation';
+import { ExitPreview } from '../../components/ExitPreview';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
-import { RichText } from 'prismic-dom';
-import { useRouter } from 'next/router';
 
 interface Post {
   first_publication_date: string | null;
@@ -36,9 +36,10 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
 }
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post, preview }: PostProps) {
   const router = useRouter()
 
   if (router.isFallback) {
@@ -62,14 +63,15 @@ export default function Post({ post }: PostProps) {
   return (
     <>
       <Head>
+        <script async defer src="https://static.cdn.prismic.io/prismic.js?new=true&repo=spacetraveling-marcel099" />
         <title>{post.data.title} | spacetraveling</title>
       </Head>
       <div className={`${commonStyles.pageContainer} ${styles.pageContainer}`}>
         <PostHeader />
+        <div className={styles.bannerContainer}>
+          <img src={post.data.banner.url} alt="Banner" />
+        </div>
         <main>
-          <div className={styles.bannerContainer}>
-            <img src={post.data.banner.url} alt="Banner" />
-          </div>
           <article className={styles.post}>
             <h1 className={styles.title}>
               {post.data.title}
@@ -140,6 +142,9 @@ export default function Post({ post }: PostProps) {
           <article className={styles.commentsArea}>
 
           </article>
+          {
+            preview && <ExitPreview />
+          }
         </footer>
       </div>
     </>
@@ -167,9 +172,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps<PostProps> = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
   const {
-      slug,
+    slug,
   } = params;
 
   if ( slug === 'favicon.png' ) {
@@ -182,16 +191,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null,
+  });
 
-  console.log({response})
-
-  const props: PostProps = {
-    post: response,
-  }
+  // console.log({response})
 
   return {
-    props,
+    props: {
+      post: response,
+      preview,
+    },
     revalidate: 60 * 30,  // 30 minutes
   }
 };

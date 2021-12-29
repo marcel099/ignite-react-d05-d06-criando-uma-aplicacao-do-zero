@@ -9,6 +9,8 @@ import ptBR from 'date-fns/locale/pt-BR';
 
 import { getPrismicClient } from '../services/prismic';
 
+import { ExitPreview } from '../components/ExitPreview';
+
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
@@ -29,6 +31,7 @@ interface PostPagination {
 
 interface HomeProps {
   postsPagination: PostPagination;
+  preview: boolean;
 }
 
 export default function Home({
@@ -36,6 +39,7 @@ export default function Home({
     next_page,
     results,
   },
+  preview,
 }: HomeProps) {
   const [posts, setPosts] = useState(results)
   const [nextPageUrl, setNextPageUrl] = useState(next_page)
@@ -107,19 +111,25 @@ export default function Home({
 
         {
           nextPageUrl !== null ? (
-            <footer className={styles.buttonContainer}>
+            <footer className={styles.morePostsContainer}>
               <button type="button" onClick={() => handleLoadMorePosts()}>
                 Carregar mais posts
               </button>
             </footer>
           ) : ''
         }
+        {
+          preview && <ExitPreview />
+        }
       </div>
     </>
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<HomeProps> = async ({
+  preview = false,
+  previewData,
+}) => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
     Prismic.Predicates.at('document.type', 'posts'),
@@ -127,6 +137,7 @@ export const getStaticProps: GetStaticProps = async () => {
       orderings : '[document.first_publication_date desc]',
       fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
       pageSize: 3,
+      ref: previewData?.ref ?? null,
     }
   );
 
@@ -140,15 +151,14 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   }))
 
-  const props: HomeProps = {
-    postsPagination: {
-      next_page: postsResponse.next_page,
-      results: posts,
-    }
-  }
-
   return {
-    props,
+    props: {
+      postsPagination: {
+        next_page: postsResponse.next_page,
+        results: posts,
+      },
+      preview,
+    },
     revalidate: 60 * 30 // 30 minutes
   }
 };
