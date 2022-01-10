@@ -11,24 +11,36 @@
 .postsNavigation {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  gap: 2rem;
 
   margin-top: 3rem;
 
-  h3 {
-    font-size: 1.125rem;
-    font-weight: 400;
-    color: var(--gray-100);
+  .postAnterior, .postPosterior {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    flex-basis: 50%;
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 400;
+      color: var(--gray-100);
+    }
+  
+    a {
+      font-weight: 600;
+      color: var(--pink-500);
+  
+      transition: 0.2s filter;
+  
+      &:hover {
+        filter: brightness(0.9);
+      }
+    }
   }
 
-  a {
-    font-weight: 600;
-    color: var(--pink-500);
-
-    transition: 0.2s filter;
-
-    &:hover {
-      filter: brightness(0.9);
-    }
+  .postPosterior:first-child {
+    margin-left: auto;
   }
 }

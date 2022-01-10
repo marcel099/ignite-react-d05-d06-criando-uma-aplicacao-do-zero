@@ -35,12 +35,25 @@ interface Post {
   };
 }
 
+interface LinkPost {
+  first_publication_date: string | null;
+  last_publication_date: string | null;
+  uid?: string;
+  data: {
+    title: string;
+  };
+}
+
 interface PostProps {
   post: Post;
+  nextPost: LinkPost;
+  previousPost: LinkPost;
   preview: boolean;
 }
 
-export default function Post({ post, preview }: PostProps) {
+export default function Post({
+  post, nextPost, previousPost, preview
+}: PostProps) {
   const router = useRouter()
 
   if (router.isFallback) {
@@ -139,7 +152,10 @@ export default function Post({ post, preview }: PostProps) {
         </main>
 
         <footer>
-          <FooterPostNavigation />
+          <FooterPostNavigation
+            previousPost={previousPost}
+            nextPost={nextPost}
+          />
           <UtterancesComments />
           {
             preview && <ExitPreview />
@@ -194,11 +210,35 @@ export const getStaticProps: GetStaticProps<PostProps> = async ({
     ref: previewData?.ref ?? null,
   });
 
-  // console.log({response})
+  const previousPostResponse = await prismic.query(
+    Prismic.Predicates.at('document.type', 'posts'),
+    {
+      fetch: ['posts.title'],
+      pageSize: 2,
+      after: String(response.id),
+      orderings : '[document.first_publication_date desc, my.posts.title desc]',
+    }
+  )
+
+  const previousPost = previousPostResponse.results[0] ?? null
+
+  const nextPostResponse = await prismic.query(
+    Prismic.Predicates.at('document.type', 'posts'),
+    {
+      fetch: ['posts.title'],
+      pageSize: 2,
+      after: String(response.id),
+      orderings : '[document.first_publication_date, my.posts.title]',
+    }
+  )
+
+  const nextPost = nextPostResponse.results[0] ?? null
 
   return {
     props: {
       post: response,
+      previousPost,
+      nextPost,
       preview,
     },
     revalidate: 60 * 30,  // 30 minutes
