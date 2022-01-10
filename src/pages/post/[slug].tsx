@@ -15,6 +15,7 @@ import { ExitPreview } from '../../components/ExitPreview';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import { UtterancesComments } from '../../components/UtteranceComments';
 
 interface Post {
   first_publication_date: string | null;
@@ -139,9 +140,7 @@ export default function Post({ post, preview }: PostProps) {
 
         <footer>
           <FooterPostNavigation />
-          <article className={styles.commentsArea}>
-
-          </article>
+          <UtterancesComments />
           {
             preview && <ExitPreview />
           }
